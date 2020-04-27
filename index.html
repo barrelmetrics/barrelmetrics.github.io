@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src= "https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script> 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
+
+
+
+
+<script src="js/date.js"></script>
+<script src="js/curve_dragtable.js"></script>
+<script src="js/curve_pnl.js"></script>
+<script src="js/curve_checkbox.js"></script>
+<script src="js/dealinit.js"></script>
+
+
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Droid+Sans:700'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
+<link rel="stylesheet" href="styles.css">
+<title>Trade Chit</title>
+
+<style>
+
+.bigButton
+{
+	background:linear-gradient(to bottom, #7892c2 5%, #476e9e 100%);
+	background-color:#7892c2;
+	border-radius:5px;
+	border:1px solid #4e6096;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:'Droid Sans', sans-serif;
+	font-size:15px;
+	padding:0px 10px;
+	text-decoration:none;
+    margin: 0 auto;
+}
+.bigButton:hover
+{
+	background:linear-gradient(to bottom, #476e9e 5%, #7892c2 100%);
+	background-color:#476e9e;
+}
+.bigButton:active
+{
+	position:relative;
+	top:1px;
+}
+
+div.container_ori {
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding-top: 5px;
+  padding-right: 0px;
+  padding-bottom: 5px;
+  padding-left: 0px;
+}
+
+div.container_heading {
+  border-radius: 0px;
+  background-color: #f2f2f2;
+  padding-top: 0px;
+  padding-right: 0px;
+  padding-bottom: 0px;
+  padding-left: 0px;
+}
+
+.rightButtonParent {text-align: right;}
+.leftButtonParent {text-align: left;}
+
+.row-data,.row-header,.curve
+{
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  padding-left: 0px;
+}
+
+.col-2 {flex:2%;}
+.col-5 {flex:5%;}
+.col-10 {flex:10%;}
+.col-5-right {flex:5%;}
+.col-20 {flex:20%;}
+.col-40 {flex:40%;}
+.col-50 {flex:50%;}
+.col-90-left {flex: 90%;}
+.col-100 {flex: 100%;}
+
+.multiselect {padding: 0 20px;}
+
+.col-unsetFlex,.col-2,.col-5,.col-10,.col-20,.col-30,.col-40,.col-50,
+.col-100 {
+	display:flex;
+    align-items:center;
+	padding: 0 5px;
+	justify-content: center;
+    border-style: none solid none none;
+    border-width: 0.1px;
+    border-color: #D3D3D3;
+}
+
+.col-90-left{
+	display:flex;
+    align-items:flex-start;
+	padding: 0 5px;
+    justify-content: flex-start;
+    flex-direction: column;
+}
+
+.col-fix150{
+    width: 150px;
+	display:flex;
+    align-items:center;
+	padding: 0 5px;
+    justify-content: center;
+    border-style: none solid none none;
+    border-width: 0.1px;
+    border-color: #D3D3D3;
+}
+
+input[type=text],input[type=date],select{
+  box-sizing: border-box;
+  min-height: 2rem;
+  width: 100%;
+  display: block;
+  margin-top: 0em;
+  margin-bottom: 0em;
+  padding: .2em;
+  border: 0;
+  border-bottom: 1px solid currentcolor; 
+  font-weight: lighter;
+  letter-spacing: .0em;
+  border-radius: 5px;
+  text-align: center;
+  &:focus, &:active {
+    outline: 0;
+    border-bottom-color: red;
+  }
+}
+
+select{
+	color: black;
+    border-bottom: 1px solid black;
+    text-align-last:center;
+}
+
+option {
+	color: #000;
+}
+
+#posTable, #priceTable , #pnlTable{
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+}
+
+#posTable td, #posTable th, #priceTable td, #posTable thead, #pnlTable th, #pnlTable td{
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#posTable tr:nth-child(even){background-color: #f2f2f2;}
+#priceTable tr:nth-child(even){background-color: #f2f2f2;}
+
+#priceTable thead tr:nth-child(2){background-color: #C1CDC1;}
+
+#posTable tr:hover {background-color: #ddd;}
+#priceTable tr:hover {background-color: #ddd;}
+
+#posTable th, #priceTable thead, #pnlTable th{
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #4CAF50;
+  color: white;
+}
+
+ul.price {
+    list-style-type: none;
+    padding: 0;
+    height: 30px;
+    margin: 0px;
+    background: #E0E0E0;
+}
+ul.price>li {
+    float: left;
+    width: 100px;
+    margin: 3px;
+    height: 20px;
+
+    font: 16px/1 Helvetica, Verdana, sans-serif;
+    background: #ffffff;
+    border-radius: 4px 4px 4px 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+
+}
+
+/* Style the tab links and content */
+
+.tablinks {
+    background-color: #555;
+    color: white;
+    float: left;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    font-size: 17px;
+    width: 20%;
+    border-style: solid;
+    border-width: 0.1px;
+    border-color: #D3D3D3;
+}
+
+.tablinks:hover {
+  background-color: #777;
+}
+
+.tabcontent {
+  display: none;
+  padding: 60px 12px;
+  border: 1px solid #ccc;
+  border-top: none;
+}
+
+.selectBox {
+  position: relative;
+}
+
+.selectBox select {
+  width: 100%;
+}
+
+.overSelect {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+#checkboxes {
+  display: block;
+  border: 1px #dadada solid;
+}
+
+#checkboxes label {
+  display: block;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id='cssmenu'>
+    <ul>
+        <li class='active'><a href='#'>Trade Chit</a></li>
+        <li><a href='Usage.html'>Usage</a></li>
+        <li><a href='#'>Contact</a></li>
+    </ul>
+</div>
+
+<div class="container_ori">
+    <div class="button" title="Add empty row">
+        <button onclick="addRow()" class="bigButton">+</button>
+    </div>
+</div>
+
+<div class="container_heading">
+    <div class="row-header">
+        <div class="col-5">
+            <label>Trade ID</label>
+        </div>
+        <div class="col-fix150">
+            <label>Trade Date</label>
+        </div>
+        <div class="col-5">
+            <label>Direction</label>
+        </div>
+        <div class="col-5">
+            <label>Quantity</label>
+        </div>
+        <div class="col-5">
+            <label>Unit</label>
+        </div>
+        <div class="col-20">
+            <label>Maturity Tenors</label>
+        </div>
+        <div class="col-20">
+            <label>Underlying Product</label>
+        </div>
+        <div class="col-5">
+            <label id="strikePricePerUnit">Strike Price</label>
+        </div>
+        <div class="col-5">
+            <label id="mtmPricePerUnit">Mtm Price</label>
+        </div>
+        <div class="col-5">
+            <label>MTM P&L</label>
+        </div>
+        <div class="col-5">
+            <label>Your Text</label>
+        </div>
+        <div class="col-2">
+            <label>&nbsp</label>
+        </div>
+        <div class="col-2">
+            <label>&nbsp</label>
+        </div>
+    </div>
+</div>
+
+<div class="container_ori" id="myDIV">
+  <div class="row-data">
+	<div class="col-5">
+		<label class="ID">:</label>
+	</div>
+	<div class="col-fix150">
+        <input type="date" class="Date">
+    </div>
+	<div class="col-5">
+		<select required class="BS">
+        	<option value="" selected disabled></option>
+            <option value=1>BUY</option>
+            <option value=-1>SELL</option>
+        </select>
+	</div>
+    <div class="col-5">
+        <input type="text" class="Quantity" type="number" title="Absolute full monthly quantity">
+    </div>
+	<div class="col-5">
+		<select required class="Unit" onchange="updateDD(this)" title="Unit applied to underlying product(s)">
+        	<option value="" selected disabled ></option>
+            <option value=1>Kbbl</option>
+            <option value=2>Kton</option>
+        </select>
+	</div>
+    <div class="col-20">
+        <select required class="Maturity" id="MatDrop">
+            <option value="" selected disabled>-Tenor1-</option>
+        </select>
+        vs
+        <select class="Maturity2" title="Opposing tenor for timespreads if applicable, else leave unselected">
+            <option value="" selected>-Tenor2-</option>
+        </select>
+    </div>
+    <div class="col-20">
+    <select required class="Product">
+        <option value="" disabled selected>-Leg1-</option>
+    </select>
+    vs
+    <select class="Product2" title="Opposing product for product spreads if applicable, else leave unselected">
+        <option value="" selected>-Leg2-</option>
+    </select>
+    </div>
+    <div class="col-5">
+        <input type="text" class="Strike" type="number" onchange="updateText(this)" placeholder="" title="Trade done price">
+    </div>
+    <div class="col-5">
+        <input type="text" class="MTM" type="number" placeholder="-readonly-" disabled title="Reads curve marks when 'Calculate P&L' is clicked">
+    </div>
+    <div class="col-5">
+        <input type="text" class="PnL" type="number" placeholder="-readonly-" disabled title="Show trade P&L after 'Calculate P&L' is clicked">
+    </div>
+    <div class="col-5">
+        <input type="text" class="Comments" type="text">
+    </div>
+    <div class="col-2">
+        <button onclick="cloneRow(this)" class="bigButton" title="Clone row"><i class="far fa-clone"></i></button>
+    </div>
+    <div class="col-2">
+        <button onclick="removeThis(this)" class="bigButton" title="Delete row"><i class="far fa-trash-alt"></i></button>
+    </div>
+  </div>
+</div>
+
+<button class="tablinks" onclick="openPage(event, 'tabExpo', this)" id="defaultOpen">Exposure</button>
+<button class="tablinks" onclick="openPage(event, 'tabCurve', this)">Curve Marks</button>
+<button class="tablinks" onclick="openPage(event, 'tabPnL', this)">P&L</button>
+<button class="tablinks" onclick="openPage(event, 'tabExport', this)">Export</button>
+<button class="tablinks" onclick="openPage(event, 'tabSettings', this)">Settings</button>
+
+
+<div id="tabExpo" class="tabcontent">
+    <ul>
+        <li>All exposures expressed in kbbl only</li>
+        <li>Brent/WTI/LS Gasoil swaps expressed in futures equivalent exposures</li>
+        <li>Swap exposure is prorated during pricing month and accounts for publication holidays</li>
+    </ul>
+    <div class="leftButtonParent">
+        <button onclick="calcPos()" class="bigButton">Calculate Exposure</button>
+    </div>
+    <br>
+    <div id="expo_container">
+        <table id="posTable">
+            <tr>
+                <th>Exposure</th>
+            </tr>
+            <tr>
+                <td>NaN</td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div id="tabCurve" class="tabcontent">
+    <div class="curve">
+        <div class="multiselect" >
+            <div class="selectBox" onclick="showCheckboxes()">
+                <select>
+                    <option>Select curves to display</option>
+                </select>
+                <div class="overSelect"></div>
+            </div>
+            <div id="checkboxes">
+                <label for="0"><input type="checkbox" onclick="toggle(this)" checked>Select All</label>
+            </div>
+            <br>
+            <button onclick="getCheckedValues()" class="bigButton">Show Curves -></button>
+        </div>
+        
+        <div class="curve_container">
+            <ul>
+                <li>Curve headings(green) can be dragged/dropped to reorder columns</li>
+                <li>Curve marks can be copied from Excel ranges and pasted here</li>
+            </ul>
+            <table id="priceTable">
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div id="tabPnL" class="tabcontent">
+    <ul>
+        <li>Curve marks required before calculating P&L</li>
+        <li>P&L calculation is based on entered quantity => Swap exposure is not prorated during pricing month</li>
+    </ul>
+    <button onclick="calcPL()" class="bigButton">Calculate P&L</button>
+    <br><br>
+    <table id="pnlTable">
+        <tr>
+            <th>Total MTM P&L</th>
+        </tr>
+        <tr>
+            <td>NaN</td>
+        </tr>
+    </table>
+</div>
+<div id="tabExport" class="tabcontent">
+    <h3>Export deal information</h3>
+
+    <button onclick="exportCSV()" class="bigButton">Export <i class="fas fa-file-csv"></i></button>  
+</div>
+<div id="tabSettings" class="tabcontent">
+    Conversion, holidays
+</div>
+
+
+
+
+<script>
+
+  //prefixes of implementation that we want to test
+  window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
+
+  //prefixes of window.IDB objects
+  window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
+  window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange
+
+  if (!window.indexedDB) {
+    window.alert("Your browser doesn't support a stable version of IndexedDB.")
+  }
+
+  var request = window.indexedDB.open("newDatabase", 1);
+
+  request.onerror = function(event) {
+    alert("-ve");
+  };
+  request.onsuccess = function(event) {
+    //alert("DB!");
+  };
+
+var currFullMthBdays; //calculated on document load and used in calcPos()
+var currMthRemainBdays; //calculated on document load and used in calcPos()
+var monthTenorCount = 12; //number of monthly tenors to show on maturity dropdown
+var arrayTenorSize = monthTenorCount + 3; //add header, run-off, total rows
+var arrayPdtSize;
+var priceArray;
+//[Option value,product,primitive $/unit,mt-bbl conversion]
+//Option value contains A means fut-to-swap, B means pure swap, else pure fut
+var underlyings =
+[
+["",""],
+["1","Brent Fut","$/bbl","7.45"],["1A","Brent Swp","$/bbl","7.45"],
+["2B","Dubai","$/bbl","7.45"],
+["3","LS Gasoil Fut","$/mt","7.45"]
+];
+
+
+function exportCSV(){
+	//get all column info
+    var dateArray = document.querySelectorAll(".Date");
+    var BSArray = document.querySelectorAll(".BS");
+    var unit = document.querySelectorAll(".Unit");
+	var qtyArray = document.querySelectorAll(".Quantity");
+    var matArray = document.querySelectorAll(".Maturity");
+    var matArray2 = document.querySelectorAll(".Maturity2");
+	var prodArray = document.querySelectorAll(".Product");
+    var prodArray2 = document.querySelectorAll(".Product2");
+
+    //initalise empty 2D array of trade entries
+	var tradeArray=new Array(BSArray.length+1);
+    for (i=0; i<(BSArray.length+1); i++)
+    {
+		tradeArray[i]=new Array(7); 
+        if(i==0) //populate header
+        {
+          tradeArray[i][0]="Date";
+          tradeArray[i][1]="Buy/Sell";
+          tradeArray[i][2]="Quantity";
+          tradeArray[i][3]="Tenor1";
+          tradeArray[i][4]="Tenor2";
+          tradeArray[i][5]="Leg1";
+          tradeArray[i][6]="Leg2";
+        }
+        if(i>0) //populate trade data
+        {
+          tradeArray[i][0]=dateArray[i-1].value;
+          tradeArray[i][1]=BSArray[i-1].options[BSArray[i-1].selectedIndex].text;
+          tradeArray[i][2]=qtyArray[i-1].value;
+          tradeArray[i][3]=matArray[i-1].options[matArray[i-1].selectedIndex].text;
+          tradeArray[i][4]=matArray2[i-1].options[matArray2[i-1].selectedIndex].text;
+          tradeArray[i][5]=prodArray[i-1].options[prodArray[i-1].selectedIndex].text;         
+          tradeArray[i][6]=prodArray2[i-1].options[prodArray2[i-1].selectedIndex].text;
+        }
+	}
+	var CsvString = "";
+	tradeArray.forEach(function(RowItem, RowIndex) {
+		RowItem.forEach(function(ColItem, ColIndex) {
+      		CsvString += ColItem + ',';
+    	});
+    	CsvString += "\r\n";
+  	});
+  	CsvString = "data:application/csv," + encodeURIComponent(CsvString);
+	var x = document.createElement("A");
+	x.setAttribute("href", CsvString );
+	x.setAttribute("download","tradedata.csv");
+	document.body.appendChild(x);
+	x.click();
+}
+
+function calcPos(){
+
+	//delete existing position table
+    if (document.contains(document.getElementById("posTable"))) {
+            document.getElementById("posTable").remove();
+	}
+
+	var BSArray = document.querySelectorAll(".BS");
+    var qtyArray = document.querySelectorAll(".Quantity");
+	var unitArray = document.querySelectorAll(".Unit");
+    var matArray = document.querySelectorAll(".Maturity");
+    var matArray2 = document.querySelectorAll(".Maturity2");
+	var prodArray = document.querySelectorAll(".Product");
+    var prodArray2 = document.querySelectorAll(".Product2");
+
+    if (checkRequiredField(0)==0){ //dealinit.js
+        alert("Pls fill in required fields for calculating exposure");
+        return; //early exit from function
+    }
+
+    var posLength = matArray.length;
+
+    //get dropdown attributes
+    var m = document.getElementsByClassName("Maturity")[0];
+    var p = document.getElementsByClassName("Product")[0];
+    arrayPdtSize = p.length+2-1;
+
+    var posArray=new Array(arrayTenorSize);
+
+    //initalise empty 2D array of tenor vs product
+    for (i=0; i<(arrayTenorSize); i++)
+        posArray[i]=new Array(arrayPdtSize);
+
+    //initialise posArray table with tenor headers and blank values
+    var rowCount = 0;//table row counter
+    for (i=0; i<(m.length); i++)
+    {
+        var optText = m.options[i].text;
+        var optValue = m.options[i].value;
+        var ibreak = 0;
+        
+        for (j=0; j<arrayPdtSize; j++)
+        {   
+            if(i==0)//initialise header and runoff rows
+            {
+                posArray[rowCount][j] = "";posArray[rowCount+1][j] = "";
+                if(j==(arrayPdtSize-1)){posArray[rowCount][j] = "Total";rowCount=2;}
+                if(j==0){posArray[rowCount+1][j] = "Daily Run-off";}
+
+            }
+            else if(i>0 && /^\d+$/.test(optValue))//value contains digits only, so skip non monthly tenors
+            {
+                if(j==0){posArray[rowCount][j]=optText;}//insert monthly tenors
+                else{posArray[rowCount][j] = "";}//insert blank for every other cells
+            }
+            else {ibreak=1;break;}
+        }
+        if(ibreak!=1 && i!=0){rowCount+=1;}
+    }
+
+    for (j=0; j<=p.length; j++) //Add total at last row
+    {
+        if(j==0){posArray[rowCount][j]="Total";}//insert monthly tenors
+        else{posArray[rowCount][j] = "";}//insert blank for every other cells        	
+    }
+    //createTable(posArray);
+    //alert("break");
+
+    //get user input info and populate 2D array with exposures on respective maturities
+    for (i=0; i<posLength; i++)
+    {
+        var BSVal = BSArray[i].value;
+        var qtyVal = qtyArray[i].value;
+        var unitVal = unitArray[i].value;
+        var matVal = matArray[i].value;
+        var matIdx = matArray[i].selectedIndex;
+        var matVal2 = matArray2[i].value;
+        var matIdx2 = matArray2[i].selectedIndex;
+        var prodVal = prodArray[i].value;
+        var prodIdx = prodArray[i].selectedIndex;
+        var prodVal2 = prodArray2[i].value;
+        var prodIdx2 = prodArray2[i].selectedIndex;
+        
+        var qtyValInsert = parseFloat(qtyVal)*parseFloat(BSVal);
+        var prdHeadInsert = p.options[prodIdx].text;            
+
+        posArray=populatePosArray(posArray,unitVal,matVal,prodVal,qtyValInsert,prdHeadInsert);//alert("back");
+        if(prodIdx2!="") //check if any product2 values exist (Product spread)
+        { alert("PS");           
+            var prdHeadInsert2 = p.options[prodIdx2].text;
+            posArray=populatePosArray(posArray,unitVal,matVal,prodVal2,-qtyValInsert,prdHeadInsert2);
+        }
+
+        if(matIdx2>0) //check if any maturity2 values selected (Time spread)
+        { alert("TS");
+            posArray=populatePosArray(posArray,unitVal,matVal2,prodVal,-qtyValInsert,prdHeadInsert);
+            if(prodIdx2!="") //check if any product2 values exist (Product spread)
+            { alert("Box");           
+            var prdHeadInsert2 = p.options[prodIdx2].text;
+            posArray=populatePosArray(posArray,unitVal,matVal2,prodVal2,qtyValInsert,prdHeadInsert2);
+            }                                                                    
+        }             
+    }//end for
+    createTable(removeEmptyColumns(posArray));
+}
+
+function populatePosArray(posArray, unitVal, matVal, prodVal, qtyValInsert, prdHeadInsert){   
+    var matStart=0; matOffset=1; matRunOff=0;
+    qtyValInsert = qtyToBbl(unitVal,prodVal,qtyValInsert);
+    
+    if(matVal.slice(-1)=="A"){ //quarterly tenor
+    	matVal=matVal.slice(0, -1);
+		matStart=0;matOffset=3;
+    }
+
+    for (j=matStart;j<(matOffset);j++) //for each month tenor
+    {
+		var swp1=0,swp2=0,swp1days,swp2days;
+        if(prodVal.slice(-1)=="A") //is a swap to fut
+        {
+          prodValMod=prodVal.slice(0, -1); //alert(j);
+          swpProp = swpToFut(prdHeadInsert,posArray[matVal-j][0]); //get swp offset months and days
+          prdHeadInsertMod = prdHeadInsert.replace("Swp", "Fut"); //change header name from swp to fut
+          //alert(swpProp[2]);
+          swp1=swpProp[0]; //swp offset mth 1
+          swp2=swpProp[1]; //swp offset mth 2
+          swp1days=swpProp[2]; //days in swp offset mth 1
+          swp2days=swpProp[3]; //days in swp offset mth 2
+
+          if((matVal-j)>1){
+            if((matVal-j)==2){ //balance of month
+                matRunOff=qtyValInsert/(swp1days+swp2days);//alert(j);alert(swp1days);alert(swp2days);
+                //alert(matRunOff);
+
+                if (currMthRemainBdays>swp2days){
+                    qtyValInsert1=(currMthRemainBdays-swp2days)/(swp1days+swp2days)*qtyValInsert; //exposure in 1st nearby
+                    qtyValInsert2 = swp2days/(swp1days+swp2days)*qtyValInsert; //exposure in 2nd nearby
+                }
+                else{
+                    qtyValInsert1=0; //no more exposure in 1st nearby
+                    qtyValInsert2=currMthRemainBdays/(swp1days+swp2days)*qtyValInsert; //exposure in remaining days in 2nd nearby
+                }
+            }
+            else{ //full month exposure
+                qtyValInsert1 = swp1days/(swp1days+swp2days)*qtyValInsert;//alert(swp1days);
+                qtyValInsert2 = swp2days/(swp1days+swp2days)*qtyValInsert;
+            }
+          }
+          else{matRunOff=0;qtyValInsert1=0;qtyValInsert2=0;} //no more exposures
+          //alert(matVal-j);alert(qtyValInsert1);alert(qtyValInsert2);
+          
+        }
+        else if(prodVal.slice(-1)=="B") //is a vanilla swap
+        {
+        	prodValMod=prodVal.slice(0, -1);
+			if((matVal-j)==2) //balmo exposure
+            {
+            	matRunOff=qtyValInsert/currFullMthBdays;
+            	qtyValInsert1=currMthRemainBdays/currFullMthBdays*qtyValInsert;
+                qtyValInsert2=0;
+            } 
+            else{qtyValInsert1=qtyValInsert;qtyValInsert2=0;} //full month exposure
+        }
+        else{ //is a fut
+        	futExpired = futExp(prdHeadInsert,posArray[matVal][0]); //alert(futExpired);
+        	prodValMod=prodVal;
+            if(!futExpired){qtyValInsert1=qtyValInsert;}
+            else{qtyValInsert1=0;}
+            qtyValInsert2=0;
+        }
+
+        //get existing array values or 0 if undefined
+        currArrayVal1 = posArray[matVal-j+swp1][prodValMod]||0;
+        currArrayVal2 = posArray[matVal-j+swp2][prodValMod]||0;
+        runOff = posArray[1][prodValMod]||0;
+        pdtTotal = posArray[arrayTenorSize-1][prodValMod]||0; //alert(pdtTotal);
+        tenorTotal1 = posArray[matVal-j+swp1][arrayPdtSize-1]||0;
+        tenorTotal2 = posArray[matVal-j+swp2][arrayPdtSize-1]||0;
+        grandTotal = posArray[arrayTenorSize-1][arrayPdtSize-1]||0;
+
+        posArray[matVal-j+swp1][prodValMod] = (parseFloat(currArrayVal1)+parseFloat(qtyValInsert1)).toFixed(2); //Add exposure to respective array position 
+        posArray[matVal-j+swp1][arrayPdtSize-1] = (parseFloat(tenorTotal1)+parseFloat(qtyValInsert1)).toFixed(2); //Add exposure to tenor total    
+        if(swp2>0){
+            posArray[matVal-j+swp2][prodValMod] = (parseFloat(currArrayVal2)+parseFloat(qtyValInsert2)).toFixed(2); //Add exposure to respective array position
+            posArray[matVal-j+swp2][arrayPdtSize-1] = (parseFloat(tenorTotal2)+parseFloat(qtyValInsert2)).toFixed(2); //Add exposure to tenor total         
+        }
+        posArray[0][prodValMod] = prdHeadInsert; //Insert product header
+        posArray[1][prodValMod] = (parseFloat(runOff)+parseFloat(matRunOff)).toFixed(2); //alert(matVal-j+swp1);alert(posArray[1][prodValMod]);
+        posArray[arrayTenorSize-1][prodValMod] = (parseFloat(pdtTotal)+parseFloat(qtyValInsert1)+parseFloat(qtyValInsert2)).toFixed(2); //Add exposure to product total 
+        posArray[arrayTenorSize-1][arrayPdtSize-1] = (parseFloat(grandTotal)+parseFloat(qtyValInsert1)+parseFloat(qtyValInsert2)).toFixed(2); //Add exposure to grand total
+    }//end for
+	return posArray;
+}
+
+//remove empty columns in 2D array
+const removeEmptyColumns = arr => {
+  // detect empty columns
+  const emptyColumns = (arr[0] || []).map((c, i) => arr.some(a => a[i]))
+  
+  // filter empty columns
+  return arr.map(a => a.filter((_, i) => emptyColumns[i]))
+}
+
+function swpToFut(prodVal,matMonth){
+	var swpProp = new Array(4);
+	if(prodVal=="Brent Swp") //break brent swp days,mth offset to fut equivalent
+    {
+    	currMatDate = "01-" + matMonth; //alert(currMatDate);
+    	currMatStart = moment(currMatDate, "DD-MMM-YY"); //alert(currMatStart);
+        currMatEnd = moment(currMatDate).endOf('month'); //alert(currMatEnd);
+        currMatBdays = getBusinessDays(currMatEnd,currMatStart); //alert(currMatBdays);
+        swpProp[0]=2; //swp offset mth 1
+        swpProp[1]=3; //swp offset mth 2
+        swpProp[2]=currMatBdays-1; //days in swp offset mth 1
+        swpProp[3]=1; //days in swp offset mth 2
+    }
+	return swpProp;
+}
+
+function futExp(prodVal,matMonth){
+	var futExpDate = [["Jan-20",new Date(2019,10,30,23,59,59)]]; //month based on zero start index
+    var expiredFound = false;
+    
+    for (var i=0; i<futExpDate.length; i++) 
+    {
+    	if (futExpDate[i][0]==matMonth)
+        	expiredFound=moment()>moment(futExpDate[i][1]);
+    }
+	return expiredFound;
+}
+
+function createTable(tableData){
+  var table = document.createElement('table');
+  table.id = "posTable";
+  var header = document.createElement("tr");
+  // get first row to be header
+  var headers = tableData[0];
+
+  // create table header
+  headers.forEach(function(rowHeader){
+    var th = document.createElement("th");
+    th.appendChild(document.createTextNode(rowHeader));
+    header.appendChild(th);
+  });      
+  //console.log(headers);
+
+  // insert table header 
+  table.append(header);
+  var row = {};
+  var cell = {};
+
+  // remove first row:header
+  tableData.shift();
+  tableData.forEach(function(rowData, index) {
+    row = table.insertRow();
+    //console.log("indice: " + index);
+    rowData.forEach(function(cellData) {
+		cell = row.insertCell();
+        cell.textContent = cellData;
+        //cell.innerHTML = '<input value='+ cellData +'>';
+    });
+  });
+  //document.getElementsByClassName("container")[0].appendChild(table);
+  document.getElementById("expo_container").appendChild(table);
+
+/*
+  var x = document.createElement("TABLE");
+  x.setAttribute("id", "myTable");
+  document.body.appendChild(x);
+
+  var y = document.createElement("TR");
+  y.setAttribute("id", "myTr");
+  document.getElementById("myTable").appendChild(y);
+
+  var z = document.createElement("TD");
+  var t = document.createTextNode("cell");
+  z.appendChild(t);
+  document.getElementById("myTr").appendChild(z);
+*/
+}
+
+//convert mt to bbls equivalent
+function qtyToBbl(unitVal,prodVal,qtyValInsert){
+    if (unitVal==2){ //if unit is mt
+        //alert(prodVal);
+        var conversionfactor = 1;
+        for(var i=0;i<(underlyings.length);i++){
+            //alert(underlying[i][0]);
+            if(underlyings[i][0]==prodVal){
+                //alert(underlyings[i][2]);
+                conversionfactor=underlyings[i][3];
+                break;
+            }
+        }
+        return qtyValInsert*conversionfactor;
+    }
+    else
+        return qtyValInsert;
+}
+
+$(document).ready(function(){
+    $('select').on('change', function(){ //attach event handler to select's change event. 
+        if ($(this).val() === ""){ //checking to see which option has been picked
+            $(this).addClass('unselected'); 
+        } else {$(this).removeClass('unselected');}
+    });
+
+    //populate monthly tenors in maturity drop down and price table
+    populateDate(); //in date.js
+    //populate underlying dropdown
+    populateProduct(underlyings); //in dealinit.js
+    //populate checkbox options with underlyings
+    populateCheckboxes(underlyings); //in curve_checkbox.js
+    //populate price table column with header and input cells
+    populateTblColumn(underlyings); //in curve_dragtable.js
+    $("table").jsdragtable();
+
+	const startOfMonth = moment().startOf('month');
+	const endOfMonth   = moment().endOf('month');
+    currFullMthBdays = getBusinessDays(endOfMonth,startOfMonth);
+    currMthRemainBdays = getBusinessDays(endOfMonth,moment().hour(0));
+
+	//set unique trade ID for first entry
+    document.getElementsByClassName("ID")[0].textContent = genUID(); //in dealinit.js
+    
+    //select default exposure tab
+    document.getElementById("defaultOpen").click();
+});
+
+
+
+
+
+//allows draggable divs
+$("#myDIV").sortable({
+    revert: true
+});
+
+//allows sortable list
+$("#list-1").sortable({
+})
+
+//When all DOM rendered, grey out all select placeholders
+
+
+
+
+//alert user that data will be abandoned after leaving page
+function goodbye(e) {
+    if(!e) e = window.event;
+    //e.cancelBubble is supported by IE - this will kill the bubbling process.
+    e.cancelBubble = true;
+    e.returnValue = '!!!!?'; //This is displayed on the dialog
+
+    //e.stopPropagation works in Firefox.
+    if (e.stopPropagation) {
+        e.stopPropagation();
+        e.preventDefault();
+    }
+}
+window.onbeforeunload=goodbye;
+
+
+//toggle between tab pages
+function openPage(evt, tabName, source) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+    tablinks[i].style.backgroundColor = "#777";
+  }
+  document.getElementById(tabName).style.display = "block";
+  evt.currentTarget.className += " active";
+  source.style.backgroundColor =  "#1e90ff";
+}
+
+
+</script>
+
+</body>
+</html>
