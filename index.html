@@ -2,8 +2,8 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<script src= "https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script> 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script> 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
 
 
@@ -18,7 +18,6 @@
 
 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-<link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Droid+Sans:700'>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
 <link rel="stylesheet" href="styles.css">
 <title>Trade Chit</title>
@@ -34,7 +33,7 @@
 	display:inline-block;
 	cursor:pointer;
 	color:#ffffff;
-	font-family:'Droid Sans', sans-serif;
+	font-family: Raleway, sans-serif;
 	font-size:15px;
 	padding:0px 10px;
 	text-decoration:none;
@@ -152,14 +151,17 @@ option {
 	color: #000;
 }
 
-#posTable, #priceTable , #pnlTable{
+#posTable,#priceTable,#pnlTable,#futExpiryTable{
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   border-collapse: collapse;
 }
 
-#posTable td, #posTable th, #priceTable td, #posTable thead, #pnlTable th, #pnlTable td{
+#posTable thead,#posTable th,#posTable td,
+#priceTable td,
+#pnlTable th,#pnlTable td,
+#futExpiryTable thead,#futExpiryTable td{
   border: 1px solid #ddd;
-  padding: 8px;
+  padding: 1px;
 }
 
 #posTable tr:nth-child(even){background-color: #f2f2f2;}
@@ -170,7 +172,7 @@ option {
 #posTable tr:hover {background-color: #ddd;}
 #priceTable tr:hover {background-color: #ddd;}
 
-#posTable th, #priceTable thead, #pnlTable th{
+#posTable th,#priceTable thead,#pnlTable th,#futExpiryTable thead{
   padding-top: 12px;
   padding-bottom: 12px;
   text-align: left;
@@ -178,25 +180,6 @@ option {
   color: white;
 }
 
-ul.price {
-    list-style-type: none;
-    padding: 0;
-    height: 30px;
-    margin: 0px;
-    background: #E0E0E0;
-}
-ul.price>li {
-    float: left;
-    width: 100px;
-    margin: 3px;
-    height: 20px;
-
-    font: 16px/1 Helvetica, Verdana, sans-serif;
-    background: #ffffff;
-    border-radius: 4px 4px 4px 4px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-
-}
 
 /* Style the tab links and content */
 
@@ -206,7 +189,7 @@ ul.price>li {
     float: left;
     outline: none;
     cursor: pointer;
-    padding: 14px 16px;
+    padding: 5px;
     font-size: 17px;
     width: 20%;
     border-style: solid;
@@ -259,8 +242,7 @@ ul.price>li {
 <div id='cssmenu'>
     <ul>
         <li class='active'><a href='#'>Trade Chit</a></li>
-        <li><a href='Usage.html'>Usage</a></li>
-        <li><a href='#'>Contact</a></li>
+        <li><a href='Contact.html'>Contact</a></li>
     </ul>
 </div>
 
@@ -451,15 +433,17 @@ ul.price>li {
     </table>
 </div>
 <div id="tabExport" class="tabcontent">
-    <h3>Export deal information</h3>
-
+    <h3>Export Calculations</h3>
     <button onclick="exportCSV()" class="bigButton">Export <i class="fas fa-file-csv"></i></button>  
 </div>
 <div id="tabSettings" class="tabcontent">
-    Conversion, holidays
+    Conversion, holidays, expiry dates
+    <h3>ICE Contract Expiries</h3>
+    <table id="futExpiryTable">
+        <tbody>
+        </tbody>
+    </table>
 </div>
-
-
 
 
 <script>
@@ -490,14 +474,31 @@ var monthTenorCount = 12; //number of monthly tenors to show on maturity dropdow
 var arrayTenorSize = monthTenorCount + 3; //add header, run-off, total rows
 var arrayPdtSize;
 var priceArray;
+
 //[Option value,product,primitive $/unit,mt-bbl conversion]
 //Option value contains A means fut-to-swap, B means pure swap, else pure fut
 var underlyings =
 [
-["",""],
-["1","Brent Fut","$/bbl","7.45"],["1A","Brent Swp","$/bbl","7.45"],
-["2B","Dubai","$/bbl","7.45"],
-["3","LS Gasoil Fut","$/mt","7.45"]
+    ["",""],
+    ["1","Brent Fut","$/bbl","7.45"],["1A","Brent Swp","$/bbl","7.45"],
+    ["2B","Dubai","$/bbl","7.45"],
+    ["3","LS Gasoil Fut","$/mt","7.45"]
+];
+
+//[Contract month, expiry date (month based on zero start index)]
+var futExpDate =
+[
+    [""],
+    ["Brent Fut",
+        ["Jun-20",new Date(2020,03,30,23,59,59)],
+        ["Jul-20",new Date(2020,04,29,23,59,59)],
+        ["Aug-20",new Date(2020,05,30,23,59,59)],
+        ["Sep-20",new Date(2020,06,31,23,59,59)],
+        ["Oct-20",new Date(2020,07,28,23,59,59)],
+        ["Nov-20",new Date(2020,08,30,23,59,59)],
+        ["Dec-20",new Date(2020,09,30,23,59,59)]
+    ],
+
 ];
 
 
@@ -717,10 +718,10 @@ function populatePosArray(posArray, unitVal, matVal, prodVal, qtyValInsert, prdH
             else{qtyValInsert1=qtyValInsert;qtyValInsert2=0;} //full month exposure
         }
         else{ //is a fut
-        	futExpired = futExp(prdHeadInsert,posArray[matVal][0]); //alert(futExpired);
+        	futExpiredFlag = futExpired(prdHeadInsert,posArray[matVal][0]); //alert(futExpiredFlag);
         	prodValMod=prodVal;
-            if(!futExpired){qtyValInsert1=qtyValInsert;}
-            else{qtyValInsert1=0;}
+            if(!futExpiredFlag){qtyValInsert1=qtyValInsert;}
+            else{qtyValInsert1=0;} //alert(qtyValInsert1);
             qtyValInsert2=0;
         }
 
@@ -772,16 +773,53 @@ function swpToFut(prodVal,matMonth){
 	return swpProp;
 }
 
-function futExp(prodVal,matMonth){
-	var futExpDate = [["Jan-20",new Date(2019,10,30,23,59,59)]]; //month based on zero start index
-    var expiredFound = false;
-    
-    for (var i=0; i<futExpDate.length; i++) 
-    {
-    	if (futExpDate[i][0]==matMonth)
-        	expiredFound=moment()>moment(futExpDate[i][1]);
+function futExpired(prodVal,matMonth){
+    var pastExpiryDate = true;
+
+    for(i=0; i<futExpDate.length;i++){
+        //get contract array and find contract month expiry date
+        if(prodVal==futExpDate[i][0]){
+            var expiryDate = findFutExpiry(prodVal,matMonth,futExpDate[i]);
+            if (expiryDate!=""){
+                pastExpiryDate=moment()>expiryDate;
+            }
+        }
     }
-	return expiredFound;
+
+    return pastExpiryDate;
+}
+
+function populateFutExpColumn(){
+  var table = document.getElementById("futExpiryTable");
+  var header = table.createTHead();
+  var row = header.insertRow(0);
+  //alert(prodArray.options.length);
+  for(i=0; i<futExpDate.length;i++){ 
+    var futurescell = row.insertCell(i); //insert column header cell
+    if(i==0){futurescell.innerHTML = "Contract Month";}
+    else{
+        //alert(futExpDate[i][0]);
+        contract = futExpDate[i][0];
+        futurescell.innerHTML = contract; //insert futures headers
+        for (mthOffset=1; mthOffset<=monthTenorCount; mthOffset++){
+            var contractMth = table.rows[mthOffset].cells[0].innerHTML;
+            var expirycell = table.rows[mthOffset].insertCell(i); //insert cells in rest of column
+            expirycell.innerHTML = findFutExpiry(contract,contractMth,futExpDate[i]);
+            //find expiry date corresponding to contract month
+
+        }
+    }
+  }
+}
+
+function findFutExpiry(contract,contractMth,contractArray){
+    for (contractNum=1; contractNum<contractArray.length; contractNum++){
+        recordMth = contractArray[contractNum][0];
+        if(contractMth==recordMth){
+            return moment(futExpDate[i][contractNum][1]).format("DD-MMM-YYYY");
+        }
+    }
+    return "";
 }
 
 function createTable(tableData){
@@ -860,15 +898,17 @@ $(document).ready(function(){
         } else {$(this).removeClass('unselected');}
     });
 
-    //populate monthly tenors in maturity drop down and price table
+    //populate monthly tenors in trade maturity drop down and curve price table
     populateDate(); //in date.js
-    //populate underlying dropdown
+    //populate trade underlying dropdown
     populateProduct(underlyings); //in dealinit.js
-    //populate checkbox options with underlyings
+    //populate curve checkbox options with underlyings
     populateCheckboxes(underlyings); //in curve_checkbox.js
-    //populate price table column with header and input cells
+    //populate curve price table with underlying header and input cells
     populateTblColumn(underlyings); //in curve_dragtable.js
     $("table").jsdragtable();
+    //populate futures expiry
+    populateFutExpColumn();
 
 	const startOfMonth = moment().startOf('month');
 	const endOfMonth   = moment().endOf('month');

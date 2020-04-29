@@ -10,13 +10,17 @@ function populateDate(){
         	$(".Maturity2").append('<option value = '+(mthOffset+2)+'A> Q' + moment().add(mthOffset, 'months').quarter() +'-'+ moment().add(mthOffset, 'months').year().toString().substr(-2) + '</option>');            
         }
 
-        //Add tenor to price table
+        //Add tenor to price table and expiry table
         var table = document.getElementById("priceTable");
+        var table2 = document.getElementById("futExpiryTable");
         // Create an empty <tr> element and add it to the 1st position of the table:
         var row = table.insertRow();
+        var row2 = table2.insertRow();
         // Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
         var cell1 = row.insertCell(0);
+        var cell2 = row2.insertCell(0);
         cell1.innerHTML = moment().add(mthOffset, 'months').format("MMM-YY");
+        cell2.innerHTML = moment().add(mthOffset, 'months').format("MMM-YY");
 	}
 }
 
