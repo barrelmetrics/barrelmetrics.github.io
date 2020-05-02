@@ -59,7 +59,9 @@ div.container_ori {
   padding-left: 0px;
 }
 
-div.container_heading {
+div.deal_container {
+    margin: auto;
+    /*width: 1800px;*/
   border-radius: 0px;
   background-color: #f2f2f2;
   padding-top: 0px;
@@ -75,8 +77,10 @@ div.container_heading {
 {
   display: flex;
   justify-content: flex-start;
-  flex-wrap: wrap;
+  /*flex-wrap: wrap;*/
   padding-left: 0px;
+  flex-flow: row nowrap; /* Force no wrapping */
+  /*flex-direction: column;*/
 }
 
 .col-2 {flex:2%;}
@@ -95,12 +99,13 @@ div.container_heading {
 .col-100 {
 	display:flex;
     align-items:center;
-	padding: 0 5px;
+	padding: 0 0px;
 	justify-content: center;
-    border-style: none solid none none;
+    border-style: none none none none;
     border-width: 0.1px;
     border-color: #D3D3D3;
 }
+
 
 .col-90-left{
 	display:flex;
@@ -110,13 +115,13 @@ div.container_heading {
     flex-direction: column;
 }
 
-.col-fix150{
-    width: 150px;
+.col-fix300{
+    /*width: 300px;*/
 	display:flex;
     align-items:center;
-	padding: 0 5px;
+	padding: 0 0px;
     justify-content: center;
-    border-style: none solid none none;
+    border-style: none none none none;
     border-width: 0.1px;
     border-color: #D3D3D3;
 }
@@ -130,7 +135,7 @@ input[type=text],input[type=date],select{
   margin-bottom: 0em;
   padding: .2em;
   border: 0;
-  border-bottom: 1px solid currentcolor; 
+  border-bottom: 1px solid currentcolor;
   font-weight: lighter;
   letter-spacing: .0em;
   border-radius: 5px;
@@ -145,37 +150,42 @@ select{
 	color: black;
     border-bottom: 1px solid black;
     text-align-last:center;
+    /*width:150px;*/
 }
 
 option {
 	color: #000;
 }
 
-#posTable,#priceTable,#pnlTable,#futExpiryTable{
+#dealTable,#posTable,#priceTable,#pnlTable,#futExpiryTable{
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   border-collapse: collapse;
 }
 
+#dealTable th,#dealTable td,
 #posTable thead,#posTable th,#posTable td,
-#priceTable td,
+#priceTable th,#priceTable td,
 #pnlTable th,#pnlTable td,
-#futExpiryTable thead,#futExpiryTable td{
+#futExpiryTable thead,#futExpiryTable th,#futExpiryTable td{
   border: 1px solid #ddd;
-  padding: 1px;
+  padding: 1px 5px 1px 5px;
 }
 
-#posTable tr:nth-child(even){background-color: #f2f2f2;}
-#priceTable tr:nth-child(even){background-color: #f2f2f2;}
+#posTable tr:nth-child(even),#priceTable tr:nth-child(even),
+#futExpiryTable tr:nth-child(even){background-color: #f2f2f2;}
 
 #priceTable thead tr:nth-child(2){background-color: #C1CDC1;}
 
-#posTable tr:hover {background-color: #ddd;}
-#priceTable tr:hover {background-color: #ddd;}
+#posTable tr:hover,#priceTable tr:hover, 
+#futExpiryTable tr:hover{background-color: #ddd;}
 
-#posTable th,#priceTable thead,#pnlTable th,#futExpiryTable thead{
-  padding-top: 12px;
-  padding-bottom: 12px;
-  text-align: left;
+#posTable th,
+#priceTable thead,#priceTable th,
+#pnlTable th,
+#futExpiryTable thead,#futExpiryTable th{
+  padding-top: 5px;
+  padding-bottom: 5px;
+  text-align: center;
   background-color: #4CAF50;
   color: white;
 }
@@ -252,112 +262,79 @@ option {
     </div>
 </div>
 
-<div class="container_heading">
-    <div class="row-header">
-        <div class="col-5">
-            <label>Trade ID</label>
-        </div>
-        <div class="col-fix150">
-            <label>Trade Date</label>
-        </div>
-        <div class="col-5">
-            <label>Direction</label>
-        </div>
-        <div class="col-5">
-            <label>Quantity</label>
-        </div>
-        <div class="col-5">
-            <label>Unit</label>
-        </div>
-        <div class="col-20">
-            <label>Maturity Tenors</label>
-        </div>
-        <div class="col-20">
-            <label>Underlying Product</label>
-        </div>
-        <div class="col-5">
-            <label id="strikePricePerUnit">Strike Price</label>
-        </div>
-        <div class="col-5">
-            <label id="mtmPricePerUnit">Mtm Price</label>
-        </div>
-        <div class="col-5">
-            <label>MTM P&L</label>
-        </div>
-        <div class="col-5">
-            <label>Your Text</label>
-        </div>
-        <div class="col-2">
-            <label>&nbsp</label>
-        </div>
-        <div class="col-2">
-            <label>&nbsp</label>
-        </div>
-    </div>
-</div>
-
-<div class="container_ori" id="myDIV">
-  <div class="row-data">
-	<div class="col-5">
-		<label class="ID">:</label>
-	</div>
-	<div class="col-fix150">
-        <input type="date" class="Date">
-    </div>
-	<div class="col-5">
-		<select required class="BS">
-        	<option value="" selected disabled></option>
-            <option value=1>BUY</option>
-            <option value=-1>SELL</option>
-        </select>
-	</div>
-    <div class="col-5">
-        <input type="text" class="Quantity" type="number" title="Absolute full monthly quantity">
-    </div>
-	<div class="col-5">
-		<select required class="Unit" onchange="updateDD(this)" title="Unit applied to underlying product(s)">
-        	<option value="" selected disabled ></option>
-            <option value=1>Kbbl</option>
-            <option value=2>Kton</option>
-        </select>
-	</div>
-    <div class="col-20">
-        <select required class="Maturity" id="MatDrop">
-            <option value="" selected disabled>-Tenor1-</option>
-        </select>
-        vs
-        <select class="Maturity2" title="Opposing tenor for timespreads if applicable, else leave unselected">
-            <option value="" selected>-Tenor2-</option>
-        </select>
-    </div>
-    <div class="col-20">
-    <select required class="Product">
-        <option value="" disabled selected>-Leg1-</option>
-    </select>
-    vs
-    <select class="Product2" title="Opposing product for product spreads if applicable, else leave unselected">
-        <option value="" selected>-Leg2-</option>
-    </select>
-    </div>
-    <div class="col-5">
-        <input type="text" class="Strike" type="number" onchange="updateText(this)" placeholder="" title="Trade done price">
-    </div>
-    <div class="col-5">
-        <input type="text" class="MTM" type="number" placeholder="-readonly-" disabled title="Reads curve marks when 'Calculate P&L' is clicked">
-    </div>
-    <div class="col-5">
-        <input type="text" class="PnL" type="number" placeholder="-readonly-" disabled title="Show trade P&L after 'Calculate P&L' is clicked">
-    </div>
-    <div class="col-5">
-        <input type="text" class="Comments" type="text">
-    </div>
-    <div class="col-2">
-        <button onclick="cloneRow(this)" class="bigButton" title="Clone row"><i class="far fa-clone"></i></button>
-    </div>
-    <div class="col-2">
-        <button onclick="removeThis(this)" class="bigButton" title="Delete row"><i class="far fa-trash-alt"></i></button>
-    </div>
-  </div>
+<div class="deal_container">
+    <table id="dealTable" width=100%>
+        <tr>
+            <th>Trade ID</th>
+            <th>Trade Date</th>
+            <th>Direction</th>
+            <th>Quantity per month</th>
+            <th>Unit</th>
+            <th>Tenor(s)</th>
+            <th>Product(s)</th>
+            <th>Strike Price</th>
+            <th>Mtm Price</th>
+            <th>Mtm P&L</th>
+            <th>(Optional Text)</th>
+            <th></th>
+            <th></th>
+        </tr>
+        <tr>
+            <td class="ID">:</td>
+            <td><input type="date" class="tradeDate"></td>
+            <td>
+                <select required class="BS">
+                    <option value="" selected disabled></option>
+                    <option value=1>BUY</option>
+                    <option value=-1>SELL</option>
+                </select>
+            </td>
+            <td>
+                <input size="7" type="text" class="Quantity" type="number" title="Absolute full monthly quantity">
+            </td>
+            <td>
+                <select required class="Unit" onchange="updateDD(this)" title="Unit applied to underlying product(s)">
+                    <option value="" selected disabled ></option>
+                    <option value=1>Kbbl</option>
+                    <option value=2>Kton</option>
+                </select>
+            </td>
+            <td><div class="col-20">
+                <select required class="Maturity">
+                    <option value="" selected disabled>-Tenor1-</option>
+                </select>
+                <select class="Maturity2" title="Tenor2 for timespreads if applicable, else leave unselected">
+                    <option value="" selected>-Tenor2 (if timespread)-</option>
+                </select>
+            </div></td>
+            <td><div class="col-20">
+                <select required class="Product">
+                    <option value="" disabled selected>-Leg1-</option>
+                </select>
+                <select class="Product2" title="Leg2 for product spreads if applicable, else leave unselected">
+                    <option value="" selected>-Leg2 (if product spread) -</option>
+                </select>
+            </div></td>
+            <td>
+                <input size="7" type="text" class="Strike" type="number" onchange="updateText(this)" placeholder="" title="Trade done price">
+            </td>
+            <td>
+                <input size="7" type="text" class="MTM" type="number" placeholder="-readonly-" disabled title="Reads curve marks when 'Calculate P&L' is clicked">
+            </td>
+            <td>
+                <input size="7" type="text" class="PnL" type="number" placeholder="-readonly-" disabled title="Show trade P&L after 'Calculate P&L' is clicked">
+            </td>
+            <td>
+                <input type="text" class="Comments" type="text">
+            </td>
+            <td>
+                <button onclick="cloneRow(this)" class="bigButton" title="Clone row"><i class="far fa-clone"></i></button>
+            </td>
+            <td>
+                <button onclick="removeThis(this)" class="bigButton" title="Delete row"><i class="far fa-trash-alt"></i></button>
+            </td>
+        </tr>
+    </table>
 </div>
 
 <button class="tablinks" onclick="openPage(event, 'tabExpo', this)" id="defaultOpen">Exposure</button>
@@ -403,7 +380,6 @@ option {
             <br>
             <button onclick="getCheckedValues()" class="bigButton">Show Curves -></button>
         </div>
-        
         <div class="curve_container">
             <ul>
                 <li>Curve headings(green) can be dragged/dropped to reorder columns</li>
@@ -498,6 +474,17 @@ var futExpDate =
         ["Nov-20",new Date(2020,08,30,23,59,59)],
         ["Dec-20",new Date(2020,09,30,23,59,59)]
     ],
+    ["LS Gasoil Fut",
+        ["May-20",new Date(2020,04,12,23,59,59)],
+        ["Jun-20",new Date(2020,05,11,23,59,59)],
+        ["Jul-20",new Date(2020,06,10,23,59,59)],
+        ["Aug-20",new Date(2020,07,12,23,59,59)],
+        ["Sep-20",new Date(2020,08,10,23,59,59)],
+        ["Oct-20",new Date(2020,09,12,23,59,59)],
+        ["Nov-20",new Date(2020,10,12,23,59,59)],
+        ["Dec-20",new Date(2020,11,10,23,59,59)]
+    ],
+
 
 ];
 
@@ -660,7 +647,7 @@ function calcPos(){
     createTable(removeEmptyColumns(posArray));
 }
 
-function populatePosArray(posArray, unitVal, matVal, prodVal, qtyValInsert, prdHeadInsert){   
+function populatePosArray(posArray,unitVal,matVal,prodVal,qtyValInsert,prdHeadInsert){   
     var matStart=0; matOffset=1; matRunOff=0;
     qtyValInsert = qtyToBbl(unitVal,prodVal,qtyValInsert);
     
@@ -671,54 +658,47 @@ function populatePosArray(posArray, unitVal, matVal, prodVal, qtyValInsert, prdH
 
     for (j=matStart;j<(matOffset);j++) //for each month tenor
     {
-		var swp1=0,swp2=0,swp1days,swp2days;
+		var swp1=0,swp2=0,swp1days,swp2days,mthBizDays;
         if(prodVal.slice(-1)=="A") //is a swap to fut
         {
-          prodValMod=prodVal.slice(0, -1); //alert(j);
-          swpProp = swpToFut(prdHeadInsert,posArray[matVal-j][0]); //get swp offset months and days
-          prdHeadInsertMod = prdHeadInsert.replace("Swp", "Fut"); //change header name from swp to fut
-          //alert(swpProp[2]);
-          swp1=swpProp[0]; //swp offset mth 1
-          swp2=swpProp[1]; //swp offset mth 2
-          swp1days=swpProp[2]; //days in swp offset mth 1
-          swp2days=swpProp[3]; //days in swp offset mth 2
+            prodValMod=prodVal.slice(0, -1); //alert(j);
+            prdHeadInsertMod = prdHeadInsert.replace("Swp", "Fut"); //change header name from swp to fut
+            swpProp = swpToFut(prdHeadInsertMod,posArray[matVal-j][0]); //get swp offset months and days
+            swp1=swpProp[0]; //swp offset mth 1
+            swp2=swpProp[1]; //swp offset mth 2
+            swp1days=swpProp[2]; //days in swp offset mth 1
+            swp2days=swpProp[3]; //days in swp offset mth 2
+            mthBizDays=swpProp[4]; //total business days in swp mth
 
-          if((matVal-j)>1){
-            if((matVal-j)==2){ //balance of month
-                matRunOff=qtyValInsert/(swp1days+swp2days);//alert(j);alert(swp1days);alert(swp2days);
-                //alert(matRunOff);
-
-                if (currMthRemainBdays>swp2days){
-                    qtyValInsert1=(currMthRemainBdays-swp2days)/(swp1days+swp2days)*qtyValInsert; //exposure in 1st nearby
-                    qtyValInsert2 = swp2days/(swp1days+swp2days)*qtyValInsert; //exposure in 2nd nearby
-                }
-                else{
-                    qtyValInsert1=0; //no more exposure in 1st nearby
-                    qtyValInsert2=currMthRemainBdays/(swp1days+swp2days)*qtyValInsert; //exposure in remaining days in 2nd nearby
-                }
+            if((matVal-j)>1){//current mth or further
+                    if((matVal-j)==2){matRunOff = qtyValInsert/mthBizDays;}//balmo runoff
+                    qtyValInsert1 = swp1days/mthBizDays*qtyValInsert;
+                    qtyValInsert2 = swp2days/mthBizDays*qtyValInsert;
             }
-            else{ //full month exposure
-                qtyValInsert1 = swp1days/(swp1days+swp2days)*qtyValInsert;//alert(swp1days);
-                qtyValInsert2 = swp2days/(swp1days+swp2days)*qtyValInsert;
-            }
-          }
-          else{matRunOff=0;qtyValInsert1=0;qtyValInsert2=0;} //no more exposures
-          //alert(matVal-j);alert(qtyValInsert1);alert(qtyValInsert2);
+            else{matRunOff=0;qtyValInsert1=0;qtyValInsert2=0;} //no more exposures
+            //alert(matVal-j);alert(qtyValInsert1);alert(qtyValInsert2);
           
         }
         else if(prodVal.slice(-1)=="B") //is a vanilla swap
         {
-        	prodValMod=prodVal.slice(0, -1);
-			if((matVal-j)==2) //balmo exposure
-            {
-            	matRunOff=qtyValInsert/currFullMthBdays;
-            	qtyValInsert1=currMthRemainBdays/currFullMthBdays*qtyValInsert;
-                qtyValInsert2=0;
-            } 
-            else{qtyValInsert1=qtyValInsert;qtyValInsert2=0;} //full month exposure
+            prodValMod=prodVal.slice(0, -1);
+            if((matVal-j)>1){//current mth or further
+                if((matVal-j)==2)//balmo exposure
+                {
+                    startOfMonth=moment().startOf('month');
+                    endOfMonth=moment().endOf('month');
+                    currFullMthBdays = getBusinessDays(endOfMonth,startOfMonth);
+                    currMthRemainBdays = getBusinessDays(endOfMonth,moment().hour(0));
+                    matRunOff=qtyValInsert/currFullMthBdays;
+                    qtyValInsert1=currMthRemainBdays/currFullMthBdays*qtyValInsert;
+                    qtyValInsert2=0;
+                }
+                qtyValInsert1=qtyValInsert;qtyValInsert2=0; //full month exposure
+            }
+            else{qtyValInsert1=0;qtyValInsert2=0;}
         }
         else{ //is a fut
-        	futExpiredFlag = futExpired(prdHeadInsert,posArray[matVal][0]); //alert(futExpiredFlag);
+        	futExpiredFlag = futExpired(prdHeadInsert,posArray[matVal][0]); //date.js
         	prodValMod=prodVal;
             if(!futExpiredFlag){qtyValInsert1=qtyValInsert;}
             else{qtyValInsert1=0;} //alert(qtyValInsert1);
@@ -757,70 +737,64 @@ const removeEmptyColumns = arr => {
   return arr.map(a => a.filter((_, i) => emptyColumns[i]))
 }
 
-function swpToFut(prodVal,matMonth){
-	var swpProp = new Array(4);
-	if(prodVal=="Brent Swp") //break brent swp days,mth offset to fut equivalent
-    {
-    	currMatDate = "01-" + matMonth; //alert(currMatDate);
-    	currMatStart = moment(currMatDate, "DD-MMM-YY"); //alert(currMatStart);
-        currMatEnd = moment(currMatDate).endOf('month'); //alert(currMatEnd);
-        currMatBdays = getBusinessDays(currMatEnd,currMatStart); //alert(currMatBdays);
-        swpProp[0]=2; //swp offset mth 1
-        swpProp[1]=3; //swp offset mth 2
-        swpProp[2]=currMatBdays-1; //days in swp offset mth 1
-        swpProp[3]=1; //days in swp offset mth 2
+//frontline swaps to future contract calculation
+function swpToFut(product,matMonth){
+    var swpToFut = new Array(5); //[frontmth1 offset,frontmth2 offset,frontmth1 days,frontmth2 days,biz days in month]
+
+    //front month swp to fut month offsets for various contracts
+    if(product=="Brent Fut"){
+        swpToFut[0] = 2;
+        swpToFut[1] = 3;
     }
-	return swpProp;
-}
+    else if(product=="LS Gasoil Fut"){
+        swpToFut[0] = 0;
+        swpToFut[1] = 1;
+    }
+    else if(product=="WTI Fut"){
+        swpToFut[0] = 1;
+        swpToFut[1] = 2;
+    }
 
-function futExpired(prodVal,matMonth){
-    var pastExpiryDate = true;
-
-    for(i=0; i<futExpDate.length;i++){
-        //get contract array and find contract month expiry date
-        if(prodVal==futExpDate[i][0]){
-            var expiryDate = findFutExpiry(prodVal,matMonth,futExpDate[i]);
-            if (expiryDate!=""){
-                pastExpiryDate=moment()>expiryDate;
+    //get front month expiry date and calculate days in first and next front line
+    var frontExpiry;
+    for (contract=1; contract<futExpDate.length; contract++){//find contract array
+        if(product==futExpDate[contract][0]){
+            //alert(prodVal);
+            for(expiry=1;expiry<futExpDate[contract].length;expiry++){//find contract with same expiry month
+                arrayExpiryMth=moment(futExpDate[contract][expiry][1]).format("MMM-YY");
+                arrayExpiry=moment(futExpDate[contract][expiry][1]);
+                if(matMonth==arrayExpiryMth){
+                    frontExpiry=arrayExpiry;
+                    break;
+                }
             }
         }
     }
 
-    return pastExpiryDate;
-}
+    currMatDate = "01-" + matMonth; //alert(currMatDate);
+    currMatStart = moment(currMatDate, "DD-MMM-YY");
+    currMatEnd = moment(currMatDate).endOf('month');
 
-function populateFutExpColumn(){
-  var table = document.getElementById("futExpiryTable");
-  var header = table.createTHead();
-  var row = header.insertRow(0);
-  //alert(prodArray.options.length);
-  for(i=0; i<futExpDate.length;i++){ 
-    var futurescell = row.insertCell(i); //insert column header cell
-    if(i==0){futurescell.innerHTML = "Contract Month";}
-    else{
-        //alert(futExpDate[i][0]);
-        contract = futExpDate[i][0];
-        futurescell.innerHTML = contract; //insert futures headers
-        for (mthOffset=1; mthOffset<=monthTenorCount; mthOffset++){
-            var contractMth = table.rows[mthOffset].cells[0].innerHTML;
-            var expirycell = table.rows[mthOffset].insertCell(i); //insert cells in rest of column
-            expirycell.innerHTML = findFutExpiry(contract,contractMth,futExpDate[i]);
-            //find expiry date corresponding to contract month
+    if(product=="Brent Fut"){frontExpiry=moment(frontExpiry).add(-1,'days');}
 
-        }
+    if(moment()>=currMatStart && moment()<frontExpiry){//entered pricing month before the expiry of frontmth1
+        swpToFut[2] = getBusinessDays(frontExpiry,moment());
+        swpToFut[3] = getBusinessDays(currMatEnd,frontExpiry.add(1,'days'));
     }
-  }
+    else if(moment()>=frontExpiry){//entered pricing month and past the expiry of frontmth1
+        swpToFut[2] = 0;
+        swpToFut[3] = getBusinessDays(currMatEnd,moment());
+    }
+    else{//not yet pricing
+        swpToFut[2] = getBusinessDays(frontExpiry,currMatStart);
+        swpToFut[3] = getBusinessDays(currMatEnd,frontExpiry.add(1,'days'));
+    }
+
+    swpToFut[4] = getBusinessDays(currMatEnd,currMatStart);
+
+	return swpToFut;
 }
 
-function findFutExpiry(contract,contractMth,contractArray){
-    for (contractNum=1; contractNum<contractArray.length; contractNum++){
-        recordMth = contractArray[contractNum][0];
-        if(contractMth==recordMth){
-            return moment(futExpDate[i][contractNum][1]).format("DD-MMM-YYYY");
-        }
-    }
-    return "";
-}
 
 function createTable(tableData){
   var table = document.createElement('table');
@@ -898,28 +872,23 @@ $(document).ready(function(){
         } else {$(this).removeClass('unselected');}
     });
 
-    //populate monthly tenors in trade maturity drop down and curve price table
-    populateDate(); //in date.js
+    //populate monthly tenors in trade maturity dropdown, price table, futures expiry table
+    populateDate(); //date.js
     //populate trade underlying dropdown
-    populateProduct(underlyings); //in dealinit.js
+    populateProduct(underlyings); //dealinit.js
     //populate curve checkbox options with underlyings
-    populateCheckboxes(underlyings); //in curve_checkbox.js
+    populateCheckboxes(underlyings); //curve_checkbox.js
     //populate curve price table with underlying header and input cells
-    populateTblColumn(underlyings); //in curve_dragtable.js
-    $("table").jsdragtable();
+    populateTblColumn(underlyings); //curve_dragtable.js
+    $("#priceTable").jsdragtable();
     //populate futures expiry
-    populateFutExpColumn();
-
-	const startOfMonth = moment().startOf('month');
-	const endOfMonth   = moment().endOf('month');
-    currFullMthBdays = getBusinessDays(endOfMonth,startOfMonth);
-    currMthRemainBdays = getBusinessDays(endOfMonth,moment().hour(0));
+    populateFutExpColumn(); //date.js
 
 	//set unique trade ID for first entry
     document.getElementsByClassName("ID")[0].textContent = genUID(); //in dealinit.js
-    
+
     //select default exposure tab
-    document.getElementById("defaultOpen").click();
+    //document.getElementById("defaultOpen").click();
 });
 
 

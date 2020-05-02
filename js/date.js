@@ -10,7 +10,7 @@ function populateDate(){
         	$(".Maturity2").append('<option value = '+(mthOffset+2)+'A> Q' + moment().add(mthOffset, 'months').quarter() +'-'+ moment().add(mthOffset, 'months').year().toString().substr(-2) + '</option>');            
         }
 
-        //Add tenor to price table and expiry table
+        //Add tenor to price table and futures expiry table
         var table = document.getElementById("priceTable");
         var table2 = document.getElementById("futExpiryTable");
         // Create an empty <tr> element and add it to the 1st position of the table:
@@ -41,4 +41,50 @@ function getBusinessDays(endDate, startDate){
 		}
     }
     return calcBusinessDays;
+}
+
+function futExpired(prodVal,matMonth){
+    var pastExpiryDate = true;
+    for(i=0; i<futExpDate.length;i++){
+        //get contract array and find contract month expiry date
+        if(prodVal==futExpDate[i][0]){
+            var expiryDate = findFutExpiry(matMonth,futExpDate[i]);
+            if (expiryDate!=""){
+                pastExpiryDate=moment()>expiryDate;
+            }
+        }
+    }
+    return pastExpiryDate;
+}
+
+function populateFutExpColumn(){
+  var table = document.getElementById("futExpiryTable");
+  var header = table.createTHead();
+  var row = header.insertRow(0);
+  //alert(prodArray.options.length);
+  for(i=0; i<futExpDate.length;i++){ 
+    var futurescell = row.insertCell(i); //insert column header cell
+    if(i==0){futurescell.outerHTML = "<th>Contract Month</th>";}
+    else{
+        //alert(futExpDate[i][0]);
+        contract = futExpDate[i][0];
+        futurescell.outerHTML = "<th>"+contract+"</th>"; //insert futures headers
+        for (mthOffset=1; mthOffset<=monthTenorCount; mthOffset++){//insert cells in rest of column
+            var contractMth = table.rows[mthOffset].cells[0].innerHTML;
+            var expirycell = table.rows[mthOffset].insertCell(i);
+            //find expiry date corresponding to row contract month
+            expirycell.innerHTML = findFutExpiry(contractMth,futExpDate[i]);
+        }
+    }
+  }
+}
+
+function findFutExpiry(contractMth,contractArray){
+    for (contractNum=1; contractNum<contractArray.length; contractNum++){
+        recordMth = contractArray[contractNum][0];
+        if(contractMth==recordMth){
+            return moment(futExpDate[i][contractNum][1]).format("DD-MMM-YYYY");
+        }
+    }
+    return "";
 }

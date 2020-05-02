@@ -18,9 +18,9 @@ function populateTblColumn(){
   for(i=0; i<underlyings.length;i++){ 
     var cell = row.insertCell(i); //insert column header cell
     var cell2 = row2.insertCell(i);
-    if(i==0){cell.innerHTML = "";cell2.innerHTML = "";}
+    if(i==0){cell.outerHTML = "<th></th>";cell2.innerHTML = "";}
     else{
-      cell.innerHTML = underlyings[i][1]; //insert underlying headers
+      cell.outerHTML = "<th>"+underlyings[i][1]+"</th>"; //insert underlying headers
       cell2.innerHTML = underlyings[i][2]; //insert underlying units
       for (mthOffset=2; mthOffset<=monthTenorCount+1; mthOffset++){
         cell = table.rows[mthOffset].insertCell(i); //insert input cells in rest of column
@@ -41,7 +41,7 @@ var Anterec;
     }
     JsDragTable.prototype.rebind = function() {
       var _this = this;
-      $(this.container).find('tr:first').find("td").each(function(headerIndex, header) {
+      $(this.container).find('tr:first').find("th").each(function(headerIndex, header) {
         if(headerIndex>0) //first column undraggable
         {
             $(header).off("mousedown touchstart");
@@ -125,6 +125,7 @@ var Anterec;
 
     JsDragTable.prototype.moveColumn = function(header, event) {
       event.preventDefault();
+      this.selectedHeader = header;
       if (this.selectedHeader !== null) {
         var userEvent = new UserEvent(event);
         this.draggableContainer.css({
@@ -139,7 +140,7 @@ var Anterec;
       event.preventDefault();
       var sourceIndex = this.selectedHeader.index() + 1;
       var targetIndex = $(event.target).index() + 1;
-      var tableColumns = $(this.container).find('tr:first').find("td").length;
+      var tableColumns = $(this.container).find('tr:first').find("th").length;
 
       var userEvent = new UserEvent(event);
       if (userEvent.isTouchEvent) {
@@ -191,7 +192,7 @@ var Anterec;
       $(table).width($(header).width());
       $(th).html($(header).html());
       $(tr).append(th);
-      //$(thead).append(tr);
+      $(thead).append(tr);
       $(table).append(thead);
       $(table).append(tbody);
       return table;
