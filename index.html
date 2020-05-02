@@ -60,14 +60,22 @@ div.container_ori {
 }
 
 div.deal_container {
+    /*display: inline-block;*/
     margin: auto;
-    /*width: 1800px;*/
+    width: 100%;
   border-radius: 0px;
   background-color: #f2f2f2;
   padding-top: 0px;
   padding-right: 0px;
   padding-bottom: 0px;
   padding-left: 0px;
+}
+
+@media only screen and (max-width: 768px) {
+  /* For mobile phones or when the screen (browser window) gets smaller than 768px */
+  div.deal_container {
+    width: 1600px;
+  }
 }
 
 .rightButtonParent {text-align: right;}
@@ -162,6 +170,9 @@ option {
   border-collapse: collapse;
 }
 
+#dealTable{width: 100%;}
+
+
 #dealTable th,#dealTable td,
 #posTable thead,#posTable th,#posTable td,
 #priceTable th,#priceTable td,
@@ -205,6 +216,9 @@ option {
     border-style: solid;
     border-width: 0.1px;
     border-color: #D3D3D3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .tablinks:hover {
@@ -263,7 +277,7 @@ option {
 </div>
 
 <div class="deal_container">
-    <table id="dealTable" width=100%>
+    <table id="dealTable">
         <tr>
             <th>Trade ID</th>
             <th>Trade Date</th>
