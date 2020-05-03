@@ -121,7 +121,9 @@ function sortTableRow(){
         });
         return $helper;
       }
-    }).disableSelection();
+    })
+    $("#dealTable tbody").disableSelection();
+
 }
 
 function genUID(){
