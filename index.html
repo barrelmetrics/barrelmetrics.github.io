@@ -69,7 +69,7 @@ div.deal_container {
 }
 
 @media only screen and (max-width: 768px) {
-  /* For mobile phones or when the screen (browser window) gets smaller than 768px */
+  /*When the screen (browser window) gets smaller than 768px */
   div.deal_container {
     width: 1600px;
   }
@@ -78,7 +78,7 @@ div.deal_container {
 .rightButtonParent {text-align: right;}
 .leftButtonParent {text-align: left;}
 
-.row-data,.row-header,.curve
+.row-header,.curve
 {
   display: flex;
   justify-content: flex-start;
@@ -290,7 +290,7 @@ option {
             <th></th>
             <th></th>
         </tr>
-        <tr>
+        <tr class="row-data">
             <td class="ID">:</td>
             <td><input type="date" class="tradeDate"></td>
             <td>
@@ -640,20 +640,20 @@ function calcPos(){
 
         posArray=populatePosArray(posArray,unitVal,matVal,prodVal,qtyValInsert,prdHeadInsert);//alert("back");
         if(prodIdx2!="") //check if any product2 values exist (Product spread)
-        { alert("PS");           
+        {
             var prdHeadInsert2 = p.options[prodIdx2].text;
             posArray=populatePosArray(posArray,unitVal,matVal,prodVal2,-qtyValInsert,prdHeadInsert2);
         }
 
         if(matIdx2>0) //check if any maturity2 values selected (Time spread)
-        { alert("TS");
+        {
             posArray=populatePosArray(posArray,unitVal,matVal2,prodVal,-qtyValInsert,prdHeadInsert);
-            if(prodIdx2!="") //check if any product2 values exist (Product spread)
-            { alert("Box");           
+            if(prodIdx2!="") //check if any product2 values exist (Crack Box)
+            {
             var prdHeadInsert2 = p.options[prodIdx2].text;
             posArray=populatePosArray(posArray,unitVal,matVal2,prodVal2,qtyValInsert,prdHeadInsert2);
-            }                                                                    
-        }             
+            }
+        }
     }//end for
     createTable(removeEmptyColumns(posArray));
 }
@@ -887,6 +887,7 @@ $(document).ready(function(){
     populateDate(); //date.js
     //populate trade underlying dropdown
     populateProduct(underlyings); //dealinit.js
+    sortTableRow();//dealinit.js: enable table row sort
     //populate curve checkbox options with underlyings
     populateCheckboxes(underlyings); //curve_checkbox.js
     //populate curve price table with underlying header and input cells
@@ -901,23 +902,6 @@ $(document).ready(function(){
     //select default exposure tab
     //document.getElementById("defaultOpen").click();
 });
-
-
-
-
-
-//allows draggable divs
-$("#myDIV").sortable({
-    revert: true
-});
-
-//allows sortable list
-$("#list-1").sortable({
-})
-
-//When all DOM rendered, grey out all select placeholders
-
-
 
 
 //alert user that data will be abandoned after leaving page
