@@ -38,7 +38,7 @@ function getCheckedValues(){
         if(checkName!="Select All" && checkName!=""){
             var cell = rows[0].insertCell(-1); //insert cell at end of row
             var cell2 = rows[1].insertCell(-1); //insert cell at end of row
-            cell.innerHTML = checkName; //get label value next to checkbox
+            cell.outerHTML = "<th>"+checkName+"</th>"; //get label value next to checkbox
             cell2.innerHTML = getPrimitiveUnits(checkName);
             for (mthOffset=2; mthOffset<=monthTenorCount+1; mthOffset++){
                 cell = table.rows[mthOffset].insertCell(-1); //insert input cells in rest of column
@@ -46,7 +46,7 @@ function getCheckedValues(){
             }
         }
     }
-    $("table").jsdragtable();
+    $("#priceTable").jsdragtable();
 }
 
 function getPrimitiveUnits(thisUdl){

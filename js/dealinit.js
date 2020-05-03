@@ -1,10 +1,17 @@
 function addRow(){
 
-    //clone div
+    //destroy sortable plugin first
+    $("#dealTable tbody").sortable("destroy");
+
+    //clone div and reset content
     var elmnt = document.getElementsByClassName("row-data")[0];
     var cln = elmnt.cloneNode(true);
-    document.getElementById("myDIV").appendChild(cln);
     clearChildren(cln);
+    cln.getElementsByClassName("ID")[0].textContent = genUID();
+    document.getElementById("dealTable").getElementsByTagName('tbody')[0].appendChild(cln);
+
+    //rebind sortable plugin
+    sortTableRow();
 
     //remove all duplicate labels
     //var origlbl1 = document.querySelectorAll('.lbl1')[0];
@@ -20,6 +27,9 @@ function addRow(){
 
 //clone row and contents
 function cloneRow(ele){
+    //destroy sortable plugin first
+    $("#dealTable tbody").sortable("destroy");
+
     var cln = ele.parentNode.parentNode.cloneNode(true);
     var i, eleSelect = ele.parentNode.parentNode.querySelectorAll("select");
     clnSelect = cln.querySelectorAll("select");
@@ -30,10 +40,11 @@ function cloneRow(ele){
         clnSelect[i].selectedIndex = eleSelect[i].selectedIndex;
         $(clnSelect[i]).css('border','');
     } 
-    var clnLabel = cln.querySelectorAll("label");
-    clnLabel[0].textContent = genUID();
+    cln.getElementsByClassName("ID")[0].textContent = genUID();
     
-    document.getElementById("myDIV").appendChild(cln);	
+    document.getElementById("dealTable").getElementsByTagName('tbody')[0].appendChild(cln);
+    //rebind sortable plugin
+    sortTableRow();
 }
 
 //remove row
@@ -74,7 +85,7 @@ function clearChildren(element){
             }
             break;
          case 'select': e.selectedIndex = 0; $(e).css('border',''); break;
-         case 'label': e.textContent = genUID();
+         case 'label': //e.textContent = genUID();
          default: clearChildren(e);
       }
    }
@@ -92,6 +103,25 @@ function populateProduct(currArray){
         select1.appendChild(el1);
         select2.appendChild(el2);
     }
+}
+
+function sortTableRow(){
+    $("#dealTable tbody").sortable({
+        items: "> tr:not(:first)",
+      cursor: "move",
+      placeholder: "sortable-placeholder",
+      helper: function(e, tr)
+      {
+        var $originals = tr.children();
+        var $helper = tr.clone();
+        $helper.children().each(function(index)
+        {
+        // Set helper cell sizes to match the original sizes
+        $(this).width($originals.eq(index).width());
+        });
+        return $helper;
+      }
+    }).disableSelection();
 }
 
 function genUID(){
