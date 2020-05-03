@@ -889,13 +889,19 @@ $(document).ready(function(){
     populateDate(); //date.js
     //populate trade underlying dropdown
     populateProduct(underlyings); //dealinit.js
-    
+
     sortTableRow();//dealinit.js: enable table row sort
-    //make input clickable on safari
-    $('.input').bind('click', function(){
-        $(this).focus();
-    });
-    $( ".tradeDate" ).datepicker(); //to show dates on safari
+let detectTap = false;
+
+$('body').on('touchstart', '#dealTable input', () => {
+  detectTap = true;
+});
+$('body').on('touchmove', '#dealTable input', () => {
+  detectTap = false;
+});
+$('body').on('touchend', '#dealTable input', (e) => {
+  if (detectTap) $(e.target).focus();
+});
 
     //populate curve checkbox options with underlyings
     populateCheckboxes(underlyings); //curve_checkbox.js
