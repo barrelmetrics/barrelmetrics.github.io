@@ -877,6 +877,10 @@ function qtyToBbl(unitVal,prodVal,qtyValInsert){
 }
 
 $(document).ready(function(){
+    //make input clickable on safari
+    $('.input').bind('click', function(){
+        $(this).focus();
+    });
     $( ".tradeDate" ).datepicker(); //to show dates on safari
 
     $('select').on('change', function(){ //attach event handler to select's change event. 
