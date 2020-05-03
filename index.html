@@ -877,11 +877,7 @@ function qtyToBbl(unitVal,prodVal,qtyValInsert){
 }
 
 $(document).ready(function(){
-    //make input clickable on safari
-    $('.input').bind('click', function(){
-        $(this).focus();
-    });
-    $( ".tradeDate" ).datepicker(); //to show dates on safari
+
 
     $('select').on('change', function(){ //attach event handler to select's change event. 
         if ($(this).val() === ""){ //checking to see which option has been picked
@@ -893,7 +889,14 @@ $(document).ready(function(){
     populateDate(); //date.js
     //populate trade underlying dropdown
     populateProduct(underlyings); //dealinit.js
+    
     sortTableRow();//dealinit.js: enable table row sort
+    //make input clickable on safari
+    $('.input').bind('click', function(){
+        $(this).focus();
+    });
+    $( ".tradeDate" ).datepicker(); //to show dates on safari
+
     //populate curve checkbox options with underlyings
     populateCheckboxes(underlyings); //curve_checkbox.js
     //populate curve price table with underlying header and input cells
