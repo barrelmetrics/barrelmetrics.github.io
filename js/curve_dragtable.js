@@ -9,6 +9,17 @@ function test(){
     alert(matrix[1][0]);
 }
 
+function clearMarks(){
+
+  var r = confirm("All marks below will be erased! Do you want to proceed?");
+  if (r == true) {
+    var inputs = document.getElementById("priceTable").getElementsByTagName('input');
+    for (i = 0; i < inputs.length; i++) { 
+        inputs[i].value = "";
+    }
+  }
+}
+
 function populateTblColumn(){
   var table = document.getElementById("priceTable");
   var header = table.createTHead();
@@ -22,8 +33,8 @@ function populateTblColumn(){
     else{
       cell.outerHTML = "<th>"+underlyings[i][1]+"</th>"; //insert underlying headers
       cell2.innerHTML = underlyings[i][2]; //insert underlying units
-      for (mthOffset=2; mthOffset<=monthTenorCount+1; mthOffset++){
-        cell = table.rows[mthOffset].insertCell(i); //insert input cells in rest of column
+      for (var mthOffset=0; mthOffset<monthTenorCount; mthOffset++){
+        cell = table.rows[mthOffset+2].insertCell(-1); //insert input cells in rest of column
         cell.innerHTML = '<input>';
       }
     }

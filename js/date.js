@@ -1,5 +1,4 @@
 function populateDate(){
-
     for (var mthOffset=0; mthOffset<monthTenorCount; mthOffset++){
     	$(".Maturity").append('<option value = '+(mthOffset+2)+ '>' + moment().add(mthOffset, 'months').format("MMM-YY") + '</option>');
         $(".Maturity2").append('<option value = '+(mthOffset+2)+ '>' + moment().add(mthOffset, 'months').format("MMM-YY") + '</option>');
@@ -9,7 +8,6 @@ function populateDate(){
         	$(".Maturity").append('<option value = '+(mthOffset+2)+'A> Q' + moment().add(mthOffset, 'months').quarter() +'-'+ moment().add(mthOffset, 'months').year().toString().substr(-2) + '</option>');
         	$(".Maturity2").append('<option value = '+(mthOffset+2)+'A> Q' + moment().add(mthOffset, 'months').quarter() +'-'+ moment().add(mthOffset, 'months').year().toString().substr(-2) + '</option>');            
         }
-
         //Add tenor to price table and futures expiry table
         var table = document.getElementById("priceTable");
         var table2 = document.getElementById("futExpiryTable");
@@ -21,7 +19,10 @@ function populateDate(){
         var cell2 = row2.insertCell(0);
         cell1.innerHTML = moment().add(mthOffset, 'months').format("MMM-YY");
         cell2.innerHTML = moment().add(mthOffset, 'months').format("MMM-YY");
-	}
+    }
+    $(".Maturity").append('<option value="999">Adjust Months</option>');
+    $(".Maturity2").append('<option value="999">Adjust Months</option>');
+
 }
 
 function getBusinessDays(endDate, startDate){
@@ -87,4 +88,38 @@ function findFutExpiry(contractMth,contractArray){
         }
     }
     return "";
+}
+
+function adjustMonths(thisSelect){
+
+    var txt;
+    var r = confirm("All entries in the trade chit will be reset! Do you want to proceed?");
+    if (r == true) {
+        if ($(thisSelect).val() === "999"){
+            monthTenorCount = prompt("Number of months to show:");
+    
+            //delete all options in dropdowns
+            var matArray = document.querySelectorAll(".Maturity");
+            var matArray2 = document.querySelectorAll(".Maturity2");
+            for (i=0; i<(matArray.length); i++)
+            {
+                thisMatArray = matArray[i];
+                thisMatArray2 = matArray2[i];
+                while (thisMatArray.length > 1) {
+                    thisMatArray.remove(thisMatArray.length-1);
+                    thisMatArray2.remove(thisMatArray2.length-1);
+                }
+                thisMatArray.selectedIndex = "0"; //reset option to default
+            }
+            document.getElementById('priceTable').innerHTML = '';
+            document.getElementById('futExpiryTable').innerHTML = '';
+            
+            //repopulate dropdown and price table
+            populateDate(); //date.js
+            populateTblColumn(); //curve_dragtable.js
+            $("#priceTable").jsdragtable();
+        }
+    } 
+
+
 }

@@ -1,11 +1,11 @@
 //Show curve checkbox list
 var expanded = true;
 
-function populateCheckboxes(currArray){
+function populateCheckboxes(){
     var checkboxes = document.getElementById("checkboxes");
-    for(i=1; i<currArray.length;i++){
+    for(i=1; i<underlyings.length;i++){
         var node = document.createElement('div');        
-        node.innerHTML = '<input type="checkbox" id="'+i+'" checked>'+ currArray[i][1];       
+        node.innerHTML = '<input type="checkbox" id="'+i+'" checked>'+ underlyings[i][1];       
         document.getElementById('checkboxes').appendChild(node);  
     }
 }
@@ -40,8 +40,8 @@ function getCheckedValues(){
             var cell2 = rows[1].insertCell(-1); //insert cell at end of row
             cell.outerHTML = "<th>"+checkName+"</th>"; //get label value next to checkbox
             cell2.innerHTML = getPrimitiveUnits(checkName);
-            for (mthOffset=2; mthOffset<=monthTenorCount+1; mthOffset++){
-                cell = table.rows[mthOffset].insertCell(-1); //insert input cells in rest of column
+            for (var mthOffset=0; mthOffset<monthTenorCount; mthOffset++){
+                cell = table.rows[mthOffset+2].insertCell(-1); //insert input cells in rest of column
                 cell.innerHTML = '<input>';
             }
         }
