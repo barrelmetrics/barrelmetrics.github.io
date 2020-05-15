@@ -10,6 +10,18 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
 
+
+
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/7.14.3/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.14.3/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.14.3/firebase-database.js"></script>
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+<script src="https://www.gstatic.com/firebasejs/7.14.3/firebase-analytics.js"></script>
+
+
+
 <script src="js/date.js"></script>
 <script src="js/curve_dragtable.js"></script>
 <script src="js/curve_pnl.js"></script>
@@ -20,7 +32,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
 <link rel="stylesheet" href="styles.css">
 
-<title>Trade Chit</title>
+<title>Trade Calculator</title>
 
 <style>
 
@@ -202,7 +214,24 @@ option {
 /* Style the tab links and content */
 
 .tablinks {
-    background-color: #555;
+    background-color: #777;
+    color: white;
+    float: left;
+    outline: none;
+    cursor: pointer;
+    padding: 5px;
+    font-size: 17px;
+    width: 20%;
+    border-style: solid;
+    border-width: 0.1px;
+    border-color: #D3D3D3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tablinks.active{
+    background-color: #1e90ff;
     color: white;
     float: left;
     outline: none;
@@ -219,12 +248,12 @@ option {
 }
 
 .tablinks:hover {
-  background-color: #777;
+  background-color: #1e90ff;
 }
 
 .tabcontent {
   display: none;
-  padding: 60px 12px;
+  padding: 40px 10px;
   border: 1px solid #ccc;
   border-top: none;
 }
@@ -256,11 +285,12 @@ option {
 
 @media screen and (max-width: 768px) {
 
-    table th {display: none;}
+    #dealTable th {display: none;}
 
-    table td {display: flex;}
+    #dealTable tr {border: 5px solid #000;}
+    #dealTable td {display: flex;}
 
-    table td:before {
+    #dealTable td:before {
         /*content: attr(label);*/
         font-weight: bold;
         min-width: 120px;
@@ -275,19 +305,25 @@ option {
 	/*
 	Label the data
 	*/
-	td:nth-of-type(1):before { content: "1"; }
-	td:nth-of-type(2):before { content: "2"; }
-	td:nth-of-type(3):before { content: "3"; }
-	td:nth-of-type(4):before { content: "4"; }
-	td:nth-of-type(5):before { content: "5"; }
-	td:nth-of-type(6):before { content: "6"; }
-	td:nth-of-type(7):before { content: "7"; }
-	td:nth-of-type(8):before { content: "8"; }
-	td:nth-of-type(9):before { content: "9"; }
-    td:nth-of-type(10):before { content: "10"; }
-    td:nth-of-type(11):before { content: "11"; }
-    td:nth-of-type(12):before { content: "12"; }
-    td:nth-of-type(13):before { content: "13"; }
+	#dealTable td:nth-of-type(1):before { content: "Trade ID"; }
+	#dealTable td:nth-of-type(2):before { content: "Trade Date"; }
+	#dealTable td:nth-of-type(3):before { content: "Direction"; }
+	#dealTable td:nth-of-type(4):before { content: "Quantity/Mth"; }
+	#dealTable td:nth-of-type(5):before { content: "Unit"; }
+	#dealTable td:nth-of-type(6):before { content: "Tenor(s)"; }
+	#dealTable td:nth-of-type(7):before { content: "Product(s)"; }
+	#dealTable td:nth-of-type(8):before { content: "Strike Price"; }
+	#dealTable td:nth-of-type(9):before { content: "Mtm Price"; }
+    #dealTable td:nth-of-type(10):before { content: "Mtm P&L"; }
+    #dealTable td:nth-of-type(11):before { content: "(Optional Text)"; }
+    #dealTable td:nth-of-type(12):before { content: ""; }
+    #dealTable td:nth-of-type(13):before { content: ""; }
+}
+
+h1 {
+   font-weight: 700;
+   color: #000;
+   font-size: 1.75rem;
 }
 
 </style>
@@ -298,7 +334,7 @@ option {
 
 <div id='cssmenu'>
     <ul>
-        <li class='active'><a href='#'>Trade Chit</a></li>
+        <li class='active'><a href='#'>Trade Calculator</a></li>
         <li><a href='about.html'>About</a></li>
         <li><a href='contact.html'>Contact</a></li>
     </ul>
@@ -306,7 +342,7 @@ option {
 
 <div class="container_ori">
     <div class="button" title="Add empty row">
-        <button onclick="addRow()" class="bigButton">+</button>
+        <button onclick="tryFireDB()" class="bigButton">+</button>
     </div>
 </div>
 
@@ -338,7 +374,7 @@ option {
                 </select>
             </td>
             <td>
-                <input size="7" type="text" class="Quantity" type="number" title="Absolute full monthly quantity">
+                <input size="7" type="text" data-key='Qty' class="Quantity" type="number" title="Absolute full monthly quantity">
             </td>
             <td>
                 <select required class="Unit" onchange="updateDD(this)" title="Unit applied to underlying product(s)">
@@ -389,7 +425,7 @@ option {
 <button class="tablinks" onclick="openPage(event, 'tabCurve', this)">Curve Marks</button>
 <button class="tablinks" onclick="openPage(event, 'tabPnL', this)">P&L</button>
 <button class="tablinks" onclick="openPage(event, 'tabExport', this)">Export</button>
-<button class="tablinks" onclick="openPage(event, 'tabSettings', this)">Configuration</button>
+<button class="tablinks" onclick="openPage(event, 'tabSettings', this)">Reference</button>
 
 
 <div id="tabExpo" class="tabcontent">
@@ -466,8 +502,13 @@ option {
     <button onclick="exportCSV()" class="bigButton">Export <i class="fas fa-file-csv"></i></button>  
 </div>
 <div id="tabSettings" class="tabcontent">
-    Conversion, holidays, expiry dates
-    <h3>ICE Futures Expiry Dates</h3>
+    <h1>Common reference data available here</h1>
+    <ul>
+        <li>Futures Expiry Dates</li>
+        <li>Holiday Calendar</li>
+        <li>Conversion Factor</li>
+    </ul>
+    <h1>ICE Futures Expiry Dates</h1>
     <table id="futExpiryTable">
         <tbody>
         </tbody>
@@ -496,6 +537,22 @@ option {
   request.onsuccess = function(event) {
     //alert("DB!");
   };
+
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyC1UeChQXkIu7-NkDRx718PC9J2fSxcqmA",
+    authDomain: "barrelmetrics.firebaseapp.com",
+    databaseURL: "https://barrelmetrics.firebaseio.com",
+    projectId: "barrelmetrics",
+    storageBucket: "barrelmetrics.appspot.com",
+    messagingSenderId: "401032470713",
+    appId: "1:401032470713:web:fa13f28a2a3b042d76bb68",
+    measurementId: "G-XSHNW9W6VM"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  firebase.analytics();
+
 
 var currFullMthBdays; //calculated on document load and used in calcPos()
 var currMthRemainBdays; //calculated on document load and used in calcPos()
@@ -967,6 +1024,8 @@ $(document).ready(function(){
 
     //select default exposure tab
     //document.getElementById("defaultOpen").click();
+
+    checkCookie();
 });
 
 
@@ -996,15 +1055,55 @@ function openPage(evt, tabName, source) {
   tablinks = document.getElementsByClassName("tablinks");
   for (i = 0; i < tablinks.length; i++) {
     tablinks[i].className = tablinks[i].className.replace(" active", "");
-    tablinks[i].style.backgroundColor = "#777";
+    //tablinks[i].style.backgroundColor = "#777";
   }
   document.getElementById(tabName).style.display = "block";
   evt.currentTarget.className += " active";
-  source.style.backgroundColor =  "#1e90ff";
+  //source.style.backgroundColor =  "#1e90ff";
+}
+
+function setCookie(cname,cvalue,exdays){
+  var d = new Date();
+  d.setTime(d.getTime() + (exdays*24*60*60*1000));
+  var expires = "expires=" + d.toGMTString();
+  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
+function getCookie(cname) {
+  var name = cname + "=";
+  var decodedCookie = decodeURIComponent(document.cookie);
+  var ca = decodedCookie.split(';');
+  for(var i = 0; i < ca.length; i++) {
+    var c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
+}
+
+function checkCookie() {
+  var user=getCookie("username");
+  if (user != "") {
+    alert("Welcome again " + user);
+    var canvas = document.getElementById("myCanvas");
+    var ctx = canvas.getContext("2d");
+    ctx.font = "30px Arial";
+    ctx.fillText("Hello World", 10, 50);
+  } else {
+     user = prompt("Please enter your name:","");
+     if (user != "" && user != null) {
+       setCookie("username", user, 30);
+     }
+  }
 }
 
 
 </script>
+
 
 </body>
 </html>
